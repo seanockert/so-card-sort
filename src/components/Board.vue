@@ -20,7 +20,7 @@
             >
               <div class="view">
                 <input class="toggle" type="checkbox" v-model="card.completed">
-                <label @dblclick="editCard(card)">{{ card.title }}</label>
+                <label @dblclick="editCard(card)">{{ card.title }} {{ card.order }}</label>
                 <button class="close" @click="removeCard(card)">&times;</button>
               </div>
               <textarea class="edit" 
@@ -239,23 +239,21 @@ export default {
     },
     dropped: function(args) {
       // Called when a card is dragged then dropped
-      // Get the category ID, then update this card with this new category ID
       const category = args.container.dataset.category
       const id = args.el.dataset.card
-      if (id) {
-        if (category && category != this.cards[id].category) {
-          this.cards[id].category = parseInt(category)
-          console.log(this.cards)
-          return
+      const cards = this.cards
+      if (id && category) {
+        // If moved to a new category, update the card with its Id
+        if (this.cards[id].category != category) {
+          cards[id].category = parseInt(category)
         }  
-        // Change sort order of the cards within a column
-        const cards = this.cards
-        const listCards = args.container.children
-        const len = listCards.length
+        // If there is more than one card in a category, update the sort order upon drop
+        const categoryCards = args.container.children
+        const len = categoryCards.length
         if (len > 1) {
-          for (var i = 0; i < len; ++i) {
-            let sortId = listCards[i].dataset.card
-            cards[sortId].order = i
+          for (var o = 0; o < len; ++o) {
+            let sortId = categoryCards[o].dataset.card
+            cards[sortId].order = o
           }
         }
       }
