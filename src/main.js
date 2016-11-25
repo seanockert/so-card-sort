@@ -30,8 +30,8 @@ Vue.use(VueRouter)
 console.log(window.location.pathname);
 // Set up possible routes
 const routes = [
-  { path: '*', exact: true, name: 'board', component: Board },
-  //{ path: '/:board', name: 'board', component: Board }
+  { path: '/', exact: true, name: 'board', component: Board },
+  { path: '/:board', name: 'board', component: Board }
 ]
 
 const router = new VueRouter({

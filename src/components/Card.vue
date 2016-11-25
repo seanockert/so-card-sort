@@ -3,11 +3,12 @@
     :class="{ completed: card.completed, editing: card == editedCard }" 
     :key="card.id"
     :data-card=card.id
+    :data-cardcat=card.category
     title="Double-click to edit"
   >
     <div class="view">
       <input class="toggle" type="checkbox" v-model="card.completed">
-      <label @dblclick="editCard(card)">{{ card.title }}</label>
+      <label @dblclick="editCard(card)">{{ card.title }} {{ card.order }}</label>
       <button class="close" @click="removeCard(card)">&times;</button>
     </div>
     <textarea class="edit" 
@@ -69,7 +70,7 @@ export default {
 <style lang="sass" scoped>
 @import "../assets/scss/_variables.scss";
 
-li,
+li.card,
 .gu-mirror {
   list-style: none;
   margin: 0;
@@ -85,7 +86,7 @@ li,
   font-size: 18px;
 }
 
-li {
+li.card {
   width: 100%;
   text-align: left;
   margin: 0;
