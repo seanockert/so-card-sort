@@ -20,7 +20,7 @@
             >
               <div class="view">
                 <input class="toggle" type="checkbox" v-model="card.completed">
-                <label @dblclick="editCard(card)">{{ card.title }} {{ card.order }}</label>
+                <label @dblclick="editCard(card)">{{ card.title }}</label>
                 <button class="close" @click="removeCard(card)">&times;</button>
               </div>
               <textarea class="edit" 
