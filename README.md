@@ -2,9 +2,7 @@
 A tool for doing UX card sorting. Gives you Trello-like board where you can create new cards and drag/drop them into categories.
 
 ## Demo
-https://seanockert.com/projects/so-card-sort
-
-Note: can't create multiple boards in the demo
+http://so-card-sort.surge.sh
 
 ## Installation
 Install the dependencies:
