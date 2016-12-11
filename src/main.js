@@ -27,7 +27,7 @@ import Board from './components/Board.vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-console.log(window.location.pathname);
+//console.log(window.location.pathname);
 // Set up possible routes
 const routes = [
   { path: '/', exact: true, name: 'board', component: Board },

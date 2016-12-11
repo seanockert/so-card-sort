@@ -67,7 +67,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 @import "../assets/scss/_variables.scss";
 
 li.card,
@@ -152,8 +152,7 @@ li.card {
     font-size: 26px;
     height: 26px;
     width: 26px;
-    padding: 3px 3px;
-    padding-bottom: 7px;
+    padding-bottom: 5px;
     border-radius: 20px;
     z-index: 99;
     transition: all 0.15s ease-out;

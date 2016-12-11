@@ -1,14 +1,14 @@
 <template>
   <div :data-id=board.id id="board">
-    <board-header :board=board :store=store class="board-header"></board-header>
+    <board-header :board="board" :store="store" class="board-header"></board-header>
           
     <section class="categories">
       <div class="scroll-container" :style=frameWidth >
         <div v-for="category in categories" :data-id=category.id class="column">
           
-          <category-header :cards=cards :category=category :categories=categories class="category-header"></category-header>
+          <category-header :cards="cards" :category="category" :categories="categories" class="category-header"></category-header>
           
-          <ul class="card-list" :data-category=category.id v-dragula="na" drake="columns">
+          <ul class="card-list" :data-category="category.id" v-dragula="na" drake="columns">
             <!--<single-card :card=card v-for="card in groupCardsBy(cards, category.id)"></single-card>-->
             
             <li v-for="card in groupCardsBy(cards, category.id)"
@@ -56,12 +56,7 @@
       </div>
     </section>
     
-    <input class="new-card"
-      autofocus autocomplete="off"
-      placeholder="Add a new card..."
-      v-model="newCard"
-      @keyup.enter="addCard"
-    >  
+    <new-card :cards="cards"></new-card> 
   </div>
 </template>
 
@@ -72,12 +67,14 @@ const STORAGE_KEY = 'so-card-sort'
 import Header from './Header.vue'
 import Category from './Category.vue'
 import Card from './Card.vue'
+import NewCard from './NewCard.vue'
 
 export default {
   name: 'board',
   components: {
     'board-header': Header,
-    'category-header': Category
+    'category-header': Category,
+    'new-card': NewCard
   },
   data: function () {
     return {
@@ -162,23 +159,6 @@ export default {
     }
   },
   methods: {
-    // Adding a card
-    addCard: function () {
-      const value = this.newCard && this.newCard.trim()
-      if (!value) return
-      const created = new Date()
-      const id = this.cards.length
-      
-      this.cards.push({
-        id: id,
-        title: value,
-        created: created,
-        category: 0,
-        order: 0,
-        completed: false
-      })
-      this.newCard = ''
-    },
     removeCard: function (card) {
       this.cards.splice(this.cards.indexOf(card), 1)
     },
@@ -348,19 +328,6 @@ export default {
 
 #board { height: 100% }
 
-.new-card {
-  padding: $base-padding;
-  font-size: 20px;
-  width: 100%;
-  border: 1px solid #ddd;
-  box-shadow: none;
-  z-index: 99;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-}
-
 .categories {
   width: 100%;
   height: 100%;
@@ -369,6 +336,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  -webkit-overflow-scrolling: touch;
   
   height: -webkit-calc(100% - 73px);
   height:    -moz-calc(100% - 73px);
@@ -390,6 +358,7 @@ export default {
     overflow-x: scroll;
     padding: 0 $base-padding;
     height: 100%;
+    -webkit-overflow-scrolling: touch;
   }
   
   .column {
@@ -543,5 +512,30 @@ li.card {
   -moz-user-select: none !important;
   -ms-user-select: none !important;
   user-select: none !important
+}
+
+@media (max-width: 560px) {
+  
+  .header {
+    
+    h1 {
+      font-size: 1em;
+    }
+  }
+  
+  input.new-card {
+    font-size: 16px;
+    -webkit-appearance: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important; 
+  }
+  
+  
+  li.card {
+    font-size: 16px;
+    
+  }
+  
+  
 }
 </style>
