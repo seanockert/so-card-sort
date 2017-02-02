@@ -15,16 +15,16 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-        loaders: {
-          css: ExtractTextPlugin.extract({
-            loader: 'css-loader',
-            fallbackLoader: 'vue-style-loader'
-          }),
-          sass: ExtractTextPlugin.extract({
-            loader: 'css-loader!sass-loader',
-            fallbackLoader: 'vue-style-loader'
-          })
-        }
+          loaders: {
+            css: ExtractTextPlugin.extract({
+              loader: 'css-loader',
+              fallbackLoader: 'vue-style-loader'
+            }),
+            sass: ExtractTextPlugin.extract({
+              loader: 'css-loader!sass-loader',
+              fallbackLoader: 'vue-style-loader'
+            })
+          }
         }
       },
       {

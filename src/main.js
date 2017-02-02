@@ -14,11 +14,12 @@ Vue.use(Vue2Dragula, {
   copySortSource: true
 })
 
-// Firebase bindings
-// TODO: Swap out local storage for Firebase storage
-//var VueFire = require('vuefire')
-//var Firebase = require('firebase')
-//Vue.use(VueFire)
+import VueTouch from 'vue-touch'
+VueTouch.registerCustomEvent('doubletap', {
+  type: 'tap',
+  taps: 2
+})
+Vue.use(VueTouch, {name: 'v-touch'})
 
 import App from './App.vue'
 import Board from './components/Board.vue'

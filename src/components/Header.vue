@@ -1,7 +1,8 @@
 <template>
   <header class="header">
     <h1 :class="{ editing: editedBoard }">
-      <div class="view" @dblclick="editBoard">{{ board.title | capitalise }}</div>
+      <!--<div class="view" @dblclick="editBoard">{{ board.title | capitalise }}</div>-->
+      <v-touch class="view" tag="div" v-on:doubletap="editBoard">{{ board.title | capitalise }}</v-touch>
       <input class="edit-board" type="text"
         v-model="board.title"
         v-card-focus="editedBoard"

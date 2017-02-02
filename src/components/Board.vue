@@ -20,7 +20,7 @@
             >
               <div class="view">
                 <input class="toggle" type="checkbox" v-model="card.completed">
-                <label @dblclick="editCard(card)">{{ card.title }}</label>
+                <v-touch tag="label" v-on:doubletap="editCard(card)">{{ card.title }}</v-touch>
                 <button class="close" @click="removeCard(card)">&times;</button>
               </div>
               <textarea class="edit" 
@@ -64,9 +64,21 @@
 // localStorage persistence
 const STORAGE_KEY = 'so-card-sort'
 
+// Firebase bindings
+/*var VueFire = require('vuefire')
+var Firebase = require('firebase')
+
+var db = Firebase.initializeApp({
+  apiKey: "AIzaSyBPs8WJJxC4Fw4ZZtu9ZDKmGe1dEQ8eF_U",
+  authDomain: "so-card-sort.firebaseapp.com",
+  databaseURL: "https://so-card-sort.firebaseio.com"
+}).database()
+
+var boardsRef = db.ref('boards')
+*/
 import Header from './Header.vue'
 import Category from './Category.vue'
-import Card from './Card.vue'
+//import Card from './Card.vue'
 import NewCard from './NewCard.vue'
 
 export default {
@@ -99,8 +111,13 @@ export default {
       store: [] // Store all the boards data from database
     }  
   },  
+  //firebase: {
+    //boards: boardsRef.limitToLast(25)
+  //},
   created: function () {
     const data = this.fetchData(this.board.slug)
+    
+    //console.log(this.$firebaseRefs.boards)
     
     if (data) {
       this.board.id = data.id
@@ -242,6 +259,9 @@ export default {
       // Fetch the contents of the current board. Get by slug
       // TODO: change this to use Firebase, ensure slug is unique or use ID
       this.store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+      //boardsRef.child(0).set(newText)
+      //console.log(boardsRef.child('boards'));
+
       if (slug) {
         for (let i = 0, len = this.store.length; i < len; i++) {
           // If this board exists in the array then display that one
@@ -281,6 +301,7 @@ export default {
       }
       // Save as stringified array
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.store))
+      //boardsRef.set(this.store)
       console.log('Saved data for board: ' + this.board.title)
     },
     createBoard: function(slug) {
@@ -534,6 +555,9 @@ li.card {
   li.card {
     font-size: 16px;
     
+    .edit {
+      font-size: 16px;
+    }
   }
   
   

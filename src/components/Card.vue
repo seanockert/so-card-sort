@@ -8,7 +8,7 @@
   >
     <div class="view">
       <input class="toggle" type="checkbox" v-model="card.completed">
-      <label @dblclick="editCard(card)">{{ card.title }} {{ card.order }}</label>
+      <v-touch tag="label" v-on:doubletap="editCard(card)">{{ card.title }} {{ card.order }}</v-touch>
       <button class="close" @click="removeCard(card)">&times;</button>
     </div>
     <textarea class="edit" 

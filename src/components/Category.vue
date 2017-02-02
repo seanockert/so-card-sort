@@ -3,7 +3,7 @@
   :class="{ editing: category == editedCategory, empty: emptyColumn(category.id) }"
   title="Double-click to edit"
   >
-    <div class="view" @dblclick="editCategory(category)">{{ category.title | capitalise }}</div>
+    <v-touch class="view" tag="div" v-on:doubletap="editCategory(category)">{{ category.title | capitalise }}</v-touch>
     <input class="edit-category" type="text"
       v-model="category.title"
       v-card-focus="category == editedCategory"
@@ -124,7 +124,7 @@ export default {
     .edit-category { 
       display: block;
       width: 100% !important;
-      margin-left: -7px !important;
+      margin-left: 0px !important;
     }
     
     input { background: #fff799 }
