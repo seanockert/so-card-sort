@@ -1,8 +1,7 @@
 <template>
   <header class="header">
     <h1 :class="{ editing: editedBoard }">
-      <!--<div class="view" @dblclick="editBoard">{{ board.title | capitalise }}</div>-->
-      <v-touch class="view" tag="div" v-on:doubletap="editBoard">{{ board.title | capitalise }}</v-touch>
+      <v-touch class="view" tag="div" v-on:doubletap="editBoard" role="button" title="Double-click to edit" tabindex="0">{{ board.title | capitalise }}</v-touch>
       <input class="edit-board" type="text"
         v-model="board.title"
         v-card-focus="editedBoard"
@@ -12,7 +11,7 @@
       > 
     </h1>
     <div :class="{ open: openMenu, 'menu' : true }" @blur="openMenu = false">
-      <button @click.prevent="openMenu = !openMenu">Boards</button>
+      <button @click.prevent="openMenu = !openMenu" tabindex="1">Boards</button>
       <ul>
         <li v-for="allBoards in store"><a :href=allBoards.slug :title=allBoards.title >{{ allBoards.title }} <span>({{ allBoards.cards.length }})</span></a>
         <!--<router-link :to=allBoards.slug title="View this board">{{ allBoards.title }}</router-link>-->
@@ -20,9 +19,9 @@
       </ul>
     </div>
     <div class="theme-select">
-      <button @click.prevent="changeTheme('green')" :class="{ active: false, 'theme-select-green' : true }"></button>
-      <button @click.prevent="changeTheme('dark')" :class="{ active: false, 'theme-select-dark' : true }"></button>
-      <button @click.prevent="changeTheme('grey')" :class="{ active: false, 'theme-select-grey' : true }"></button>
+      <button @click.prevent="changeTheme('green')" :class="{ active: false, 'theme-select-green' : true }" tabindex="2" title="Change theme"></button>
+      <button @click.prevent="changeTheme('dark')" :class="{ active: false, 'theme-select-dark' : true }" tabindex="3" title="Change theme"></button>
+      <button @click.prevent="changeTheme('grey')" :class="{ active: false, 'theme-select-grey' : true }" tabindex="4" title="Change theme"></button>
     </div>  
   </header>
 </template>
@@ -85,7 +84,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../assets/scss/_variables.scss";
   
 h1 {
@@ -206,18 +205,19 @@ h1 {
 
   button {
     border: none;
-    height: 20px;
-    width: 20px;
+    height: 22px;
+    width: 22px;
     background: $color-background-grey;
     border: 2px solid rgba(255,255,255,0.9);
     cursor: pointer;
+    border-radius: 50%;
     transition: all 0.15s ease-out;
     
     &.theme-select-green { background: $color-dark-green }
     &.theme-select-dark { background: $color-dark-brown }
     
     &:hover {
-      transform: scale(1.1);
+      transform: scale(1.15);
       border-color: rgba(0,0,0,0.4);
     }
     

@@ -39,7 +39,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
 @import "../assets/scss/_variables.scss";
 
 .new-card {

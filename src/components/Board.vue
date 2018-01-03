@@ -337,7 +337,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 @import "../assets/scss/_variables.scss";
 
 .header {
