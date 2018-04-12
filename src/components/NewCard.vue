@@ -13,18 +13,18 @@
 export default {
   name: 'new-card',
   props: ['cards'],
-  data: function () {
+  data: function() {
     return {
       newCard: ''
-    }
+    };
   },
   methods: {
-    addCard: function () {
-      const value = this.newCard && this.newCard.trim()
-      if (!value) return
-      const created = new Date()
-      const id = this.cards.length
-      
+    addCard: function() {
+      const value = this.newCard && this.newCard.trim();
+      if (!value) return;
+      const created = new Date();
+      const id = this.cards.length;
+
       this.cards.push({
         id: id,
         title: value,
@@ -32,11 +32,11 @@ export default {
         category: 0,
         order: 99,
         completed: false
-      })
-      this.newCard = ''
+      });
+      this.newCard = '';
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

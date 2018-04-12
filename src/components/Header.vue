@@ -10,7 +10,7 @@
         autocomplete="off"
       > 
     </h1>
-    <div :class="{ open: openMenu, 'menu' : true }" @blur="openMenu = false">
+    <div :class="{ open: openMenu, 'menu' : true }" @blur="openMenu = false" v-if="store.length > 1">
       <button @click.prevent="openMenu = !openMenu" tabindex="1">Boards</button>
       <ul>
         <li v-for="allBoards in store"><a :href=allBoards.slug :title=allBoards.title >{{ allBoards.title }} <span>({{ allBoards.cards.length }})</span></a>
@@ -30,84 +30,93 @@
 export default {
   name: 'cards',
   props: ['board', 'store'],
-  data: function () {
+  data: function() {
     return {
       editedBoard: null,
       openMenu: false
-    }
+    };
   },
   methods: {
-    editBoard: function () {
-      this.beforeEditCache = this.board.title
-      this.editedBoard = true
+    editBoard: function() {
+      this.beforeEditCache = this.board.title;
+      this.editedBoard = true;
     },
-    doneEditBoard: function () {
-      if (!this.editedBoard) return
-      
-      this.editedBoard = false
-      
+    doneEditBoard: function() {
+      if (!this.editedBoard) return;
+
+      this.editedBoard = false;
+
       if (!this.board.title && this.board.id != 0) {
         if (confirm('Delete this board?')) {
           // Setting a blank title will delete the board in the saveData method
           //this.$router.push('new-board')
-          window.location.pathname = ''
+          window.location.pathname = '';
         } else {
-          this.board.title = this.beforeEditCache
+          this.board.title = this.beforeEditCache;
         }
-        return
-      }   
-      
-      this.board.slug = this.board.title.trim().toLowerCase().replace(/ /g,'-')
-      window.history.replaceState('', this.board.title, this.board.slug)
-      if (!this.board.title) this.board.title = this.beforeEditCache
+        return;
+      }
+
+      this.board.slug = this.board.title
+        .trim()
+        .toLowerCase()
+        .replace(/ /g, '-');
+      window.history.replaceState('', this.board.title, this.board.slug);
+      if (!this.board.title) this.board.title = this.beforeEditCache;
     },
     changeTheme: function(theme) {
-      this.board.theme = 'theme-' + theme
-      document.documentElement.className = this.board.theme
-    },
+      this.board.theme = 'theme-' + theme;
+      document.documentElement.className = this.board.theme;
+    }
   },
   filters: {
     capitalise: function(string) {
-      if (string) { 
-        return string.charAt(0).toUpperCase() + string.slice(1)
+      if (string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
       }
-      return string
+      return string;
     }
   },
   directives: {
-    'card-focus': function (el, value) {
+    'card-focus': function(el, value) {
       if (value) {
-        el.focus()
+        el.focus();
       }
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
 @import "../assets/scss/_variables.scss";
-  
+
 h1 {
   margin-top: 0;
   margin-bottom: 0;
   font-weight: bold;
   position: relative;
   cursor: pointer;
-  .view { display: block }
-  .edit-board { display: none }
-  
-  &.editing {  
+  .view {
+    display: block;
+  }
+  .edit-board {
+    display: none;
+  }
+
+  &.editing {
     margin-top: -3px;
     margin-bottom: -3px;
-    
-    .view { display: none }
-    .edit-board { 
+
+    .view {
+      display: none;
+    }
+    .edit-board {
       display: block;
       margin-left: 2px;
       text-align: center;
       margin: 0 auto;
     }
-    
+
     input {
       background: #fff799;
       font-weight: bold;
@@ -121,7 +130,7 @@ h1 {
   top: $base-padding;
   width: 150px;
   z-index: 999;
-  
+
   button {
     background: none;
     border: none;
@@ -130,34 +139,36 @@ h1 {
     outline: none;
     text-align: left;
     width: 100%;
-    
+
     &:after {
       display: inline-block;
       content: '\25BC';
       font-size: 0.7em;
-      color: rgba(0,0,0,0.2);
+      color: rgba(0, 0, 0, 0.2);
       margin-left: $base-padding/3;
       vertical-align: middle;
       transition: all 0.15s ease-out;
     }
-    
-    &:hover { color: darken($color-link-blue, 20%) }
+
+    &:hover {
+      color: darken($color-link-blue, 20%);
+    }
   }
-  
+
   ul {
-    background: rgba(255,255,255,0.9);
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
     text-align: left;
     display: none;
     margin-top: 0;
     border-radius: 5px;
     overflow: hidden;
   }
-  
+
   li {
     display: block;
     margin: 0;
-    
+
     a {
       display: block;
       padding: $base-padding;
@@ -165,33 +176,32 @@ h1 {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      
+
       span {
         display: inline-block;
         font-size: 0.9em;
-        color: rgba(0,0,0,0.2);
+        color: rgba(0, 0, 0, 0.2);
         vertical-align: middle;
         margin-top: -3px;
       }
-      
+
       &:hover {
         background: #fff;
       }
-    }    
+    }
   }
-  
+
   &.open {
-    
     button {
       color: $color-dark-blue;
       text-decoration: none;
-      
+
       &:after {
-        transform: rotate(-180deg) translate3d(0,2px,0);
+        transform: rotate(-180deg) translate3d(0, 2px, 0);
         transform-origin: 50% 50%;
       }
     }
-    
+
     ul {
       display: block;
     }
@@ -199,7 +209,7 @@ h1 {
 }
 
 .theme-select {
-  position: absolute; 
+  position: absolute;
   top: $base-padding;
   right: $base-padding;
 
@@ -208,26 +218,29 @@ h1 {
     height: 22px;
     width: 22px;
     background: $color-background-grey;
-    border: 2px solid rgba(255,255,255,0.9);
+    border: 2px solid rgba(255, 255, 255, 0.9);
     cursor: pointer;
     border-radius: 50%;
     transition: all 0.15s ease-out;
-    
-    &.theme-select-green { background: $color-dark-green }
-    &.theme-select-dark { background: $color-dark-brown }
-    
+
+    &.theme-select-green {
+      background: $color-dark-green;
+    }
+    &.theme-select-dark {
+      background: $color-dark-brown;
+    }
+
     &:hover {
       transform: scale(1.15);
-      border-color: rgba(0,0,0,0.4);
+      border-color: rgba(0, 0, 0, 0.4);
     }
-    
+
     &.active {
       margin-top: -2px;
       height: 24px;
       width: 24px;
-      border: 2px solid rgba(0,0,0,0.4);
+      border: 2px solid rgba(0, 0, 0, 0.4);
     }
   }
 }
-
 </style>

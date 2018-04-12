@@ -20,62 +20,62 @@
 export default {
   name: 'cards',
   props: ['cards', 'category', 'categories'],
-  data: function () {
+  data: function() {
     return {
       editedCategory: null
-    }
+    };
   },
   methods: {
-    removeCategory: function (category) {
-      const cards = this.cards
-      const len = cards.length
+    removeCategory: function(category) {
+      const cards = this.cards;
+      const len = cards.length;
       for (var i = 0; i < len; ++i) {
-        // Move all cards with this category back to the first column 
-        if (category.id === cards[i].category)  cards[i].category = 0
+        // Move all cards with this category back to the first column
+        if (category.id === cards[i].category) cards[i].category = 0;
       }
-      this.categories.splice(this.categories.indexOf(category), 1)
+      this.categories.splice(this.categories.indexOf(category), 1);
     },
-    editCategory: function (category) {
-      this.beforeEditCache = category.title
-      this.editedCategory = category
+    editCategory: function(category) {
+      this.beforeEditCache = category.title;
+      this.editedCategory = category;
     },
-    doneEditCategory: function (category) {
-      if (!this.editedCategory) return
-      this.editedCategory = null
-      category.title = category.title.trim()
-      if (!category.title) this.removeCategory(category)
+    doneEditCategory: function(category) {
+      if (!this.editedCategory) return;
+      this.editedCategory = null;
+      category.title = category.title.trim();
+      if (!category.title) this.removeCategory(category);
     },
-    cancelEditCategory: function (category) {
-      this.editedCategory = null
-      category.title = this.beforeEditCache
+    cancelEditCategory: function(category) {
+      this.editedCategory = null;
+      category.title = this.beforeEditCache;
     },
     emptyColumn: function(category) {
       // Display a label if the column is empty
-      const cards = this.cards
-      const len = cards.length
+      const cards = this.cards;
+      const len = cards.length;
       for (var i = 0; i < len; ++i) {
         if (category === cards[i].category) {
-          return false
-          break
+          return false;
+          break;
         }
       }
-      return true
+      return true;
     }
   },
   filters: {
     capitalise: function(string) {
       if (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1)
+        return string.charAt(0).toUpperCase() + string.slice(1);
       }
-      return string
+      return string;
     }
   },
   directives: {
-    'card-focus': function (el, value) {
-      if (value) el.focus()
+    'card-focus': function(el, value) {
+      if (value) el.focus();
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -83,13 +83,15 @@ export default {
 
 .column h3 {
   cursor: pointer;
-  .view { display: block }
-  
-  .add-category, 
-  .edit-category { 
-    display: none 
+  .view {
+    display: block;
   }
-  
+
+  .add-category,
+  .edit-category {
+    display: none;
+  }
+
   input {
     border: 1px solid #ddd;
     padding: $base-padding/2;
@@ -98,41 +100,44 @@ export default {
     color: $color-dark-blue;
     text-align: center;
   }
-  
+
   &.empty {
     position: relative;
-    
+
     &:after {
       display: block;
       content: 'Empty';
-      color: rgba(0,0,0,0.2);
+      color: rgba(0, 0, 0, 0.2);
       font-weight: normal;
       font-size: 16px;
       margin-top: $base-padding*3;
-      font-style: italic;    
+      font-style: italic;
       position: absolute;
       text-align: center;
-      width: 100%;  
+      width: 100%;
     }
-  }  
-  
-  &.editing {  
+  }
+
+  &.editing {
     margin-bottom: -7px;
-    
-    .view { display: none }
-    .add-category, 
-    .edit-category { 
+
+    .view {
+      display: none;
+    }
+    .add-category,
+    .edit-category {
       display: block;
       width: 100% !important;
       margin-left: 0px !important;
     }
-    
-    input { background: #fff799 }
-    
+
+    input {
+      background: #fff799;
+    }
+
     &:after {
       margin-top: 29px;
     }
   }
 }
-
 </style>

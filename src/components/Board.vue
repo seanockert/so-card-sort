@@ -1,14 +1,14 @@
 <template>
   <div :data-id=board.id id="board">
     <board-header :board="board" :store="store" class="board-header"></board-header>
-          
+    <span @click="deleteData" class="button-delete">&times;</span>      
     <section class="categories">
       <div class="scroll-container" :style=frameWidth >
         <div v-for="category in categories" :data-id=category.id class="column">
           
           <category-header :cards="cards" :category="category" :categories="categories" class="category-header"></category-header>
           
-          <ul class="card-list" :data-category="category.id" v-dragula="na" drake="columns">
+          <ul class="card-list" :data-category="category.id" v-dragula="" drake="columns">
             <!--<single-card :card=card v-for="card in groupCardsBy(cards, category.id)"></single-card>-->
             
             <li v-for="card in groupCardsBy(cards, category.id)"
@@ -62,24 +62,15 @@
 
 <script>
 // localStorage persistence
-const STORAGE_KEY = 'so-card-sort'
+const STORAGE_KEY = 'so-card-sort';
 
-// Firebase bindings
-/*var VueFire = require('vuefire')
-var Firebase = require('firebase')
+// JSONstore.io endpoint
+const jsonEndpoint =
+  'https://www.jsonstore.io/28dd8af88e5d0975ee8a52e8c04a4058f922d64dbb64d473f35ff95f7fefc746/';
 
-var db = Firebase.initializeApp({
-  apiKey: "AIzaSyBPs8WJJxC4Fw4ZZtu9ZDKmGe1dEQ8eF_U",
-  authDomain: "so-card-sort.firebaseapp.com",
-  databaseURL: "https://so-card-sort.firebaseio.com"
-}).database()
-
-var boardsRef = db.ref('boards')
-*/
-import Header from './Header.vue'
-import Category from './Category.vue'
-//import Card from './Card.vue'
-import NewCard from './NewCard.vue'
+import Header from './Header.vue';
+import Category from './Category.vue';
+import NewCard from './NewCard.vue';
 
 export default {
   name: 'board',
@@ -88,13 +79,13 @@ export default {
     'category-header': Category,
     'new-card': NewCard
   },
-  data: function () {
+  data: function() {
     return {
-      board: { 
-        id: 0, 
-        title: '', 
-        slug: this.$route.params.board, 
-        created: new Date(), 
+      board: {
+        id: 0,
+        title: '',
+        slug: this.$route.params.board,
+        created: new Date(),
         theme: 'theme-grey'
       },
       cards: [],
@@ -108,62 +99,39 @@ export default {
       newCategory: '',
       editedCard: null,
       allDone: true,
+      localData: false,
       store: [] // Store all the boards data from database
-    }  
-  },  
-  //firebase: {
-    //boards: boardsRef.limitToLast(25)
-  //},
-  created: function () {
-    const data = this.fetchData(this.board.slug)
-    
-    //console.log(this.$firebaseRefs.boards)
-    
-    if (data) {
-      this.board.id = data.id
-      this.board.title = data.title
-      this.board.slug = data.slug
-      this.board.created = data.created
-      this.board.theme = data.theme
-      this.cards = data.cards 
-      
-      if (data.categories) this.categories = data.categories
-    }
-    
-    if (!this.board.slug) {
-      this.board.slug = 'new-board'
-      this.board.title = 'New board'
-    }
-    
-    document.title = this.board.title + ' | UX Card Sort'
-    if (this.board.theme) document.documentElement.className = this.board.theme
-      
-    // Dragula drag and drop events
-    const service = this.$dragula.$service
+    };
+  },
+  created: function() {
+    this.fetchData(this.board.slug);
+
+    // Init Dragula drag and drop events
+    const service = this.$dragula.$service;
     service.options('drop-service', {
       direction: 'vertical'
-    }) 
-    service.eventBus.$on('drop', (args) => {
-      this.dropped(args) 
-    })  
+    });
+    service.eventBus.$on('drop', args => {
+      this.dropped(args);
+    });
   },
   watch: {
     // Watch cards change for localStorage persistence
     cards: {
-      handler: function () {
-        this.saveData()
+      handler: function() {
+        this.saveData();
       },
       deep: true
     },
     categories: {
-      handler: function () {
-        this.saveData()
+      handler: function() {
+        this.saveData();
       },
       deep: true
     },
     board: {
-      handler: function () {
-        this.saveData()
+      handler: function() {
+        this.saveData();
       },
       deep: true
     }
@@ -171,64 +139,64 @@ export default {
   computed: {
     frameWidth: function() {
       if (this.categories) {
-        return 'width:' + (this.categories.length+1)*260 + 'px'
+        return 'width:' + (this.categories.length + 1) * 260 + 'px';
       }
     }
   },
   methods: {
-    removeCard: function (card) {
-      this.cards.splice(this.cards.indexOf(card), 1)
+    removeCard: function(card) {
+      this.cards.splice(this.cards.indexOf(card), 1);
     },
-    editCard: function (card) {
-      this.beforeEditCache = card.title
-      this.editedCard = card
+    editCard: function(card) {
+      this.beforeEditCache = card.title;
+      this.editedCard = card;
     },
-    doneEdit: function (card) {
-      if (!this.editedCard) return
-      this.editedCard = null
-      card.title = card.title.trim()
-      if (!card.title) this.removeCard(card)
+    doneEdit: function(card) {
+      if (!this.editedCard) return;
+      this.editedCard = null;
+      card.title = card.title.trim();
+      if (!card.title) this.removeCard(card);
     },
-    cancelEdit: function (card) {
-      this.editedCard = null
-      card.title = this.beforeEditCache
+    cancelEdit: function(card) {
+      this.editedCard = null;
+      card.title = this.beforeEditCache;
     },
     resize: function(e) {
       // Resize the textarea to fit the content
       e.target.style.height = '1px';
-      e.target.style.height = (e.target.scrollHeight)+'px';
+      e.target.style.height = e.target.scrollHeight + 'px';
     },
     // Adding a category
     showAddCategory: function() {
-      this.newCategory = 'New category'
+      this.newCategory = 'New category';
     },
     addCategory: function() {
-      var value = this.newCategory && this.newCategory.trim()
-      if (!value) return
-      var id = this.categories.length
+      var value = this.newCategory && this.newCategory.trim();
+      if (!value) return;
+      var id = this.categories.length;
       this.categories.push({ id: id, title: value });
-      this.newCategory = ''
-    },   
+      this.newCategory = '';
+    },
     cancelAddCategory: function() {
-      this.newCategory = ''
-    },  
+      this.newCategory = '';
+    },
     // Filters
     showActive: function(cards) {
-      return cards.filter(function (card) {
-        return !card.completed
-      })
+      return cards.filter(function(card) {
+        return !card.completed;
+      });
     },
     showAllCards: function(cards) {
-      return cards
+      return cards;
     },
     groupCardsBy: function(cards, category) {
       // Return only cards in this category arranged by 'sorted'
-      const cardList = cards.filter(function (card) { 
-        if (card.category === category) return card
-      })
-      return cardList.sort(this.sortOrder)
+      const cardList = cards.filter(function(card) {
+        if (card.category === category) return card;
+      });
+      return cardList.sort(this.sortOrder);
     },
-    sortOrder: function(a,b) {
+    sortOrder: function(a, b) {
       // Sort cards by their order property (ascending)
       if (a.order < b.order) return -1;
       if (a.order > b.order) return 1;
@@ -236,105 +204,186 @@ export default {
     },
     dropped: function(args) {
       // Called when a card is dragged then dropped
-      const category = args.container.dataset.category
-      const id = args.el.dataset.card
-      const cards = this.cards
+      const category = args.container.dataset.category;
+      const id = args.el.dataset.card;
+      const cards = this.cards;
       if (id && category) {
         // If moved to a new category, update the card with its Id
         if (this.cards[id].category != category) {
-          cards[id].category = parseInt(category)
-        }  
+          cards[id].category = parseInt(category);
+        }
         // If there is more than one card in a category, update the sort order upon drop
-        const categoryCards = args.container.children
-        const len = categoryCards.length
+        const categoryCards = args.container.children;
+        const len = categoryCards.length;
         if (len > 1) {
           for (var o = 0; o < len; ++o) {
-            let sortId = categoryCards[o].dataset.card
-            cards[sortId].order = o
+            let sortId = categoryCards[o].dataset.card;
+            cards[sortId].order = o;
           }
         }
       }
     },
-    fetchData: function (slug) {
-      // Fetch the contents of the current board. Get by slug
-      // TODO: change this to use Firebase, ensure slug is unique or use ID
-      this.store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-      //boardsRef.child(0).set(newText)
-      //console.log(boardsRef.child('boards'));
+    processFetchData: function(data, slug) {
+      if (!data) {
+        data = [];
+      }
+
+      this.store = data;
+      let selectedBoard = data[0],
+        exists = false;
 
       if (slug) {
-        for (let i = 0, len = this.store.length; i < len; i++) {
+        for (let i = 0, len = data.length; i < len; i++) {
           // If this board exists in the array then display that one
           if (this.store[i].slug == slug) {
-            return this.store[i]
-            break
+            selectedBoard = data[i];
+            exists = true;
           }
         }
-        // Add a new board with this slug
-        this.createBoard(slug)
-        return
+
+        if (!exists) {
+          // Add a new board with this slug
+          this.createBoard(slug);
+          return;
+        }
       }
-      // If no slug is passed then use the first board
-      return this.store[0]
+
+      if (data.length == 0) {
+        console.log('No data');
+        this.board.title = 'New board';
+        this.board.slug = 'new-board';
+        this.createBoard(this.board.slug);
+        return;
+      } else {
+        console.log('Init board');
+        this.board.id = selectedBoard.id;
+        this.board.title = selectedBoard.title;
+        this.board.slug = selectedBoard.slug;
+        this.board.created = selectedBoard.created;
+        this.board.theme = selectedBoard.theme;
+        this.cards = selectedBoard.cards;
+
+        if (selectedBoard.categories) {
+          this.categories = selectedBoard.categories;
+        }
+      }
+
+      // Set the page title
+      document.title = this.board.title + ' | SO Card Sort';
+
+      // Set the theme
+      if (this.board.theme) {
+        document.documentElement.className = this.board.theme;
+      }
+    },
+    fetchData: function(slug) {
+      // Fetch the contents of the current board. Get by slug
+      // TODO: ensure slug is unique or use ID
+      if (this.localData) {
+        this.store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        this.processFetchData(this.store, slug);
+      } else {
+        const self = this;
+        this.$http
+          .get(jsonEndpoint, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(
+            response => {
+              self.processFetchData(response.data.result, slug);
+            },
+            error => {
+              console.log('Could not fetch the data');
+            }
+          );
+      }
+    },
+    deleteData: function() {
+      if (confirm('Delete all data?')) {
+        if (this.localData) {
+          localStorage.setItem(STORAGE_KEY, '');
+        } else {
+          this.$http.post(jsonEndpoint, [], {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('delete');
+        }
+      }
     },
     saveData: function() {
       // Create an object with the current board to save
       if (this.board.title) {
-        const saveData = { 
+        const saveData = {
           id: this.board.id,
           title: this.board.title,
           slug: this.board.slug,
           theme: this.board.theme,
-          categories: this.categories, 
+          categories: this.categories,
           cards: this.cards
-        }
+        };
 
         if (this.store[this.board.id]) {
-          this.store[this.board.id] = saveData
+          this.store[this.board.id] = saveData;
         } else {
           // A new board so push add it to the store array
-          this.store.push(saveData)
-        }  
+          this.store.push(saveData);
+        }
       } else {
         // If no title is set then delete this board
-        this.store.splice(this.board.id, 1)
+        this.store.splice(this.board.id, 1);
       }
-      // Save as stringified array
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.store))
-      //boardsRef.set(this.store)
-      console.log('Saved data for board: ' + this.board.title)
+
+      const saveJson = this.store;
+
+      if (this.localData) {
+        // Save as stringified array
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(saveJson));
+        //boardsRef.set(this.store)
+      } else {
+        this.$http.post(jsonEndpoint, saveJson, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+
+      console.log('Saved data for board: ' + this.board.title);
     },
     createBoard: function(slug) {
-      this.board.id = this.store.length
-      this.board.slug = slug
-      this.board.title = this.$options.filters.prettify(slug)
-      console.log('Added new board: ' + this.board.title)
+      this.board.id = this.store.length;
+      this.board.slug = slug;
+      this.board.title = this.$options.filters.prettify(slug);
+      console.log('Added new board: ' + this.board.title);
     }
   },
   filters: {
-    pluralise: function (n) {
-      return n === 1 ? 'card' : 'cards'
+    pluralise: function(n) {
+      return n === 1 ? 'card' : 'cards';
     },
     prettify: function(string) {
       if (string) {
-        string = string.replace(/-/g,' ')
-        return string.charAt(0).toUpperCase() + string.slice(1)
+        string = string.replace(/-/g, ' ');
+        return string.charAt(0).toUpperCase() + string.slice(1);
       }
-      return string
+      return string;
     },
     timestampToDate: function(timestamp) {
-      var d = new Date(timestamp)
-      return d.getDate() + '-' + (d.getMonth()+1) + '-' + d.getFullYear()
+      var d = new Date(timestamp);
+      return d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear();
     }
   },
   // Wait for the DOM to be updated before focusing on the input field
   // TODO: make global instead of replicating in each component?
   directives: {
-    'card-focus': function (el, value) {
-      if (value) el.focus()
+    'card-focus': function(el, value) {
+      if (value) el.focus();
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -347,7 +396,9 @@ export default {
   padding-bottom: $base-padding;
 }
 
-#board { height: 100% }
+#board {
+  height: 100%;
+}
 
 .categories {
   width: 100%;
@@ -358,12 +409,13 @@ export default {
   display: flex;
   flex-direction: column;
   -webkit-overflow-scrolling: touch;
-  
+
   height: -webkit-calc(100% - 73px);
-  height:    -moz-calc(100% - 73px);
-  height:         calc(100% - 73px);
-  
-  &:before, &:after {
+  height: -moz-calc(100% - 73px);
+  height: calc(100% - 73px);
+
+  &:before,
+  &:after {
     display: block;
     content: '';
     position: fixed;
@@ -371,17 +423,17 @@ export default {
     bottom: 0;
     height: 100%;
     width: 8px;
-    pointer-events: none;  
+    pointer-events: none;
     z-index: 9;
   }
-  
+
   .scroll-container {
     overflow-x: scroll;
     padding: 0 $base-padding;
     height: 100%;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .column {
     width: 250px;
     float: left;
@@ -396,13 +448,12 @@ export default {
   padding-bottom: 60px;
 }
 
-
 li.card,
 .gu-mirror {
   list-style: none;
   margin: 0;
   background: #fff;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
   position: relative;
   border: 2px solid transparent;
   line-height: 1.4;
@@ -418,27 +469,30 @@ li.card {
   text-align: left;
   margin: 0;
   margin-bottom: $base-padding/2;
-  
+
   &:after {
     clear: both;
     content: '';
     width: 100%;
-    display: block
+    display: block;
   }
-  
+
   &.completed label {
     text-decoration: line-through;
     color: #999;
-  }    
-  
-  &.gu-transit { opacity: 0.4; border: 2px dashed #2C3E50 }   
-  
+  }
+
+  &.gu-transit {
+    opacity: 0.4;
+    border: 2px dashed #2c3e50;
+  }
+
   .view {
     padding: $base-padding;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   .edit {
     position: relative;
     margin: 0;
@@ -454,7 +508,7 @@ li.card {
     word-wrap: break-word;
     resize: none;
   }
- 
+
   input[type='checkbox'] {
     padding: 0;
     cursor: pointer;
@@ -463,8 +517,8 @@ li.card {
     left: -6px;
     opacity: 0;
     outline: none;
-  } 
-  
+  }
+
   .close {
     background: red;
     color: #fff;
@@ -484,25 +538,27 @@ li.card {
     border-radius: 20px;
     z-index: 99;
     transition: all 0.15s ease-out;
-    
+
     &:hover {
-      background: #AB0000;
+      background: #ab0000;
     }
   }
-  
+
   &:hover {
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    
-    .close, 
-    input[type='checkbox'] { opacity: 1 }   
-  }   
-  
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+
+    .close,
+    input[type='checkbox'] {
+      opacity: 1;
+    }
+  }
+
   &.editing {
     .edit {
       display: inline-block;
       margin-left: 0;
     }
-    
+
     .view {
       display: none;
     }
@@ -518,48 +574,53 @@ li.card {
   padding: 0;
   background: #f7f7f7;
   transform: rotate(4deg);
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 
-  .edit, 
-  .close, 
+  .edit,
+  .close,
   input[type='checkbox'] {
     display: none;
   }
 }
 
-.gu-hide { display: none !important }
+.gu-hide {
+  display: none !important;
+}
 .gu-unselectable {
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
-  user-select: none !important
+  user-select: none !important;
+}
+
+.button-delete {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 100;
+  opacity: 0.5;
 }
 
 @media (max-width: 560px) {
-  
   .header {
-    
     h1 {
       font-size: 1em;
     }
   }
-  
+
   input.new-card {
     font-size: 16px;
     -webkit-appearance: none !important;
     border-radius: 0 !important;
-    margin: 0 !important; 
+    margin: 0 !important;
   }
-  
-  
+
   li.card {
     font-size: 16px;
-    
+
     .edit {
       font-size: 16px;
     }
   }
-  
-  
 }
 </style>
