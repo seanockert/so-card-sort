@@ -1,0 +1,51 @@
+
+// Skeleton loading frame
+.skeleton {
+  margin: $base-padding*2 0;
+
+  div {
+    height: 1.5rem;
+    margin-bottom: $base-padding;
+    background-color: rgba(200,200,200,0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    z-index: 9;
+
+    &.skeleton-header {
+      height: 1.5rem;
+      margin-bottom: $base-padding;
+    }
+
+    &:last-child { width: 60% }
+
+    &:after {
+      content: '';
+      animation: skeletonLoading 1s linear infinite;
+      animation-fill-mode: forwards;
+      background: linear-gradient(to right, rgba(255,255,255,0) 8%, rgba(255,255,255,0.5) 18%, rgba(255,255,255,0) 33%);
+      background-size: 900px 100%;
+      height: inherit;
+      position: relative;
+      z-index: 10;
+      display: block;
+    }
+  }
+}
+
+.sidebar {
+  .skeleton {
+    margin: $base-padding;
+
+    div {
+      height: 1rem;
+      margin-bottom: $base-padding/2;
+      background-color: rgba(255,255,255,0.2);
+    }
+  }
+}
+
+@keyframes skeletonLoading{
+  0% { background-position: -500px 0 }
+  100%{ background-position: 500px 0 }
+}

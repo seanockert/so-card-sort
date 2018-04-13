@@ -11,7 +11,7 @@
       > 
     </h1>
     <div :class="{ open: openMenu, 'menu' : true }" @blur="openMenu = false" v-if="store.length > 1">
-      <button @click.prevent="openMenu = !openMenu" tabindex="1">Boards</button>
+      <button @click.prevent="openMenu = !openMenu">Boards</button>
       <ul>
         <li v-for="allBoards in store"><a :href=allBoards.slug :title=allBoards.title >{{ allBoards.title }} <span>({{ allBoards.cards.length }})</span></a>
         <!--<router-link :to=allBoards.slug title="View this board">{{ allBoards.title }}</router-link>-->
@@ -19,9 +19,9 @@
       </ul>
     </div>
     <div class="theme-select">
-      <button @click.prevent="changeTheme('green')" :class="{ active: false, 'theme-select-green' : true }" tabindex="2" title="Change theme"></button>
-      <button @click.prevent="changeTheme('dark')" :class="{ active: false, 'theme-select-dark' : true }" tabindex="3" title="Change theme"></button>
-      <button @click.prevent="changeTheme('grey')" :class="{ active: false, 'theme-select-grey' : true }" tabindex="4" title="Change theme"></button>
+      <button @click.prevent="changeTheme('green')" :class="{ active: false, 'theme-select-green' : true }" tabindex="-1" title="Change theme"></button>
+      <button @click.prevent="changeTheme('dark')" :class="{ active: false, 'theme-select-dark' : true }" tabindex="-1" title="Change theme"></button>
+      <button @click.prevent="changeTheme('grey')" :class="{ active: false, 'theme-select-grey' : true }" tabindex="-1" title="Change theme"></button>
     </div>  
   </header>
 </template>
@@ -217,6 +217,7 @@ h1 {
     border: none;
     height: 22px;
     width: 22px;
+    padding: 0;
     background: $color-background-grey;
     border: 2px solid rgba(255, 255, 255, 0.9);
     cursor: pointer;

@@ -1,5 +1,12 @@
 <template>
   <div :data-id=board.id id="board">
+    <div class="skeleton" v-if="loading">
+      <div class="skeleton-option"></div>
+      <div class="skeleton-option"></div>
+      <div class="skeleton-option"></div>
+    </div>
+
+    <div v-else>
     <board-header :board="board" :store="store" class="board-header"></board-header>
     <span @click="deleteData" class="button-delete">&times;</span>      
     <section class="categories">
@@ -41,7 +48,7 @@
         <div class="column">
           <h3 :class="{ editing: newCategory != '' }">
             <div class="view">
-              <a href="#" @click.prevent="showAddCategory" title="Add a new category to this board">+ Add category</a>
+              <button @click.prevent="showAddCategory" title="Add a new category to this board" class="link">+ Add category</button>
             </div>
             <input class="add-category" type="text"
               v-model="newCategory"
@@ -57,6 +64,7 @@
     </section>
     
     <new-card :cards="cards"></new-card> 
+    </div>
   </div>
 </template>
 
@@ -100,6 +108,7 @@ export default {
       editedCard: null,
       allDone: true,
       localData: false,
+      loading: false,
       store: [] // Store all the boards data from database
     };
   },
@@ -283,6 +292,7 @@ export default {
         this.store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
         this.processFetchData(this.store, slug);
       } else {
+        this.loading = true;
         const self = this;
         this.$http
           .get(jsonEndpoint, {
@@ -292,6 +302,7 @@ export default {
           })
           .then(
             response => {
+              this.loading = false;
               self.processFetchData(response.data.result, slug);
             },
             error => {
@@ -394,10 +405,16 @@ export default {
   margin: 0 auto;
   padding: $base-padding*2 0;
   padding-bottom: $base-padding;
+  min-height: 10vh
 }
 
 #board {
   height: 100%;
+}
+
+.skeleton {
+  max-width: 80%;
+  margin: 24px auto;
 }
 
 .categories {
@@ -413,6 +430,7 @@ export default {
   height: -webkit-calc(100% - 73px);
   height: -moz-calc(100% - 73px);
   height: calc(100% - 73px);
+  min-height: 90vh;
 
   &:before,
   &:after {
@@ -438,6 +456,14 @@ export default {
     width: 250px;
     float: left;
   }
+}
+
+.link {
+  padding: 0;
+  color: $color-link-blue;
+  text-decoration: underline;
+  background: none;
+  border: none;
 }
 
 .card-list {
@@ -517,6 +543,7 @@ li.card {
     left: -6px;
     opacity: 0;
     outline: none;
+    -webkit-appearance: checkbox;
   }
 
   .close {
@@ -598,11 +625,14 @@ li.card {
   bottom: 0;
   right: 0;
   z-index: 100;
-  opacity: 0.5;
+  opacity: 0;
 }
 
 @media (max-width: 560px) {
   .header {
+    width: 100%;
+    padding-top: $base-padding*3;
+
     h1 {
       font-size: 1em;
     }

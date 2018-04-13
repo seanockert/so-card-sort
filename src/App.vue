@@ -9,30 +9,31 @@
 <script>
 export default {
   name: 'app',
-  data () {
+  data() {
     return {
       title: 'SO Card Sort',
       transitionName: 'fade'
-    }
+    };
   },
   computed: {
-    // Provide a key for the router so the transition will change 
+    // Provide a key for the router so the transition will change
     // between the same view eg. /hello/a and hello/b
-    // To transition all pages the same just use :key="$route.fullPath"  
-    key () { 
-      if (this.$route.name == 'board') { 
-        return this.$route.name 
-      } else { 
-        return this.$route.fullPath 
-      } 
-    } 
-  } 
-}
+    // To transition all pages the same just use :key="$route.fullPath"
+    key() {
+      if (this.$route.name == 'board') {
+        return this.$route.name;
+      } else {
+        return this.$route.fullPath;
+      }
+    }
+  }
+};
 </script>
 
 <style lang="scss">
 @import "./assets/scss/_reset.scss";
 @import "./assets/scss/_variables.scss";
+@import "./assets/scss/_skeleton.scss";
 
 *,
 *:before,
